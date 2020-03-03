@@ -1,1 +1,1 @@
-Ruby_CLI_App_Project1
+Flatiron School CLI App - Hangman!
