@@ -1,10 +1,10 @@
 class CLI
     attr_reader :user
-    attr_accessor :board, :score, :guesses, :game_word
+    attr_accessor :board, :score, :guesses, :game_word, :number_of_guesses
 
     def initialize(user)
         @user = user
-        @score = 100
+        @score = 60
         @board = []
         @guesses = []
     end
@@ -16,90 +16,102 @@ class CLI
         self.game_word = select_word(topic)
         create_default_game_board(game_word)
         hangman_art_use = hangman_art
-        print_hangman_art(hangman_art_use[0])
 
         game_over = false
         win = false 
-        number_of_guesses = 0
+        self.number_of_guesses = 0
 
-        play_round_guess
-        """while !game_over do
-            correct_status = play_round_guess
+        while !game_over do
+            play_round_guess(hangman_art_use)
 
-            if !correct_status
-                number_of_guesses += 1
-            end
-
-            win = check_if_finished
-
-            if win
+            if self.number_of_guesses == 6
+                # Game lost
+                break
+            elsif !self.board.index("_")
+                # Game won
+                win = true 
                 break
             end
         end
 
         if win
             puts 'you win'
+            puts board.join(" ")
         else
             puts 'you lose'
-        end"""
+        end
     end
 
-    def play_round_guess
-        binding.pry
-        while true 
-            puts "Which letter would you like to guess?"
-            guess = gets.chomp
+    def play_round_guess(hangman_art_use)
+        puts "Current game board:"
+        print_game_board(hangman_art_use[number_of_guesses])
 
-            valid_number = valid_letter_check(guess)
+        puts "Which letter would you like to guess?"
+        guess = gets.chomp
             
-            case valid_number 
-            when -1
-                puts "Input was blank, try again, no guess penalty."
-            when 0
-                puts "Input has already been used in a guess, try again, no guess penalty."
-            when 1
-                round_result = check_guess(guess)
-            end
+        case valid_letter_check(guess) 
+        when -1
+            puts "Input was blank, try again, no guess penalty."
+            play_round_guess(hangman_art_use)
+        when 0
+            puts "Input has already been used in a guess, try again, no guess penalty."
+            play_round_guess(hangman_art_use)
+        when 1
+            round_result = check_guess(guess)
+            self.number_of_guesses += round_result 
 
-            puts "Letter already guessed or invalid guess, guess again."
-        end 
+            if round_result == 0
+                puts "Nice guess!"
+                puts
+            else
+                puts "Wrong guess! Your numnber of guesses is now: #{number_of_guesses}."
+            end
+        end
     end
 
     def check_guess(guess)
         if guess.length > 1
-            if game_word.downcase == guess.downcase
-                board = game_word.split("")
+            if self.game_word.downcase == guess.downcase
+                self.board = game_word.split("")
                 return 0
             else
                 return 1
             end
         else
-            result = (0...game_word.length).select {|index| game_word[index].downcase == guess.downcase}
+            result = (0...self.game_word.length).select {|index| self.game_word[index].downcase == guess.downcase}
 
-            for i in result
-                binding.pry
+            if result.length == 0
+                return 1
+            else
+                for i in result
+                    self.board[i] = guess
+                end
+
+                return 0
             end
         end
     end
 
     def valid_letter_check(guess)
-        binding.pry
-        if guesses.include?(guess)
+        if self.guesses.include?(guess)
+            # Return 0, meaning that the guess has already been guessed
             return 0
         elsif guess.length == 0
+            # Return -1, meaning that the guess is blank
             return -1
         else
-            guesses << guess
+            # Return 1, meaning that guess is valid / add guess to the guesses array.
+            self.guesses << guess
             return 1
         end
     end
 
     def create_default_game_board(game_word)
         counter = 0
-        board = []
+        self.board = []
 
         while counter < game_word.length do 
-            board << "_"
+            self.board << "_"
             counter += 1
         end
     end
@@ -154,7 +166,7 @@ class CLI
           end
     end
 
-    def print_hangman_art(hangman_art)
+    def print_game_board(hangman_art)
         art_split = hangman_art.split("\n")
         
         counter = 0
@@ -163,6 +175,10 @@ class CLI
             puts art_split[counter]
             counter += 1
         end
+        
+        puts
+        puts self.board.join(" ")
+        puts
     end
 
     def hangman_art
