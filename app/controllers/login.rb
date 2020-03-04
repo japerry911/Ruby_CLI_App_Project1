@@ -11,12 +11,18 @@ def login
         
         response = prompt.select("What would you like to do?", ["Login", "Create a New User"])
 
+        system("clear")
+        
         if response == "Login"
             puts "What is the username?"
             username = gets.chomp
 
+            system("clear")
+
             puts "What is the password?"
             password = gets.chomp 
+
+            system("clear")
 
             valid_login = validate_credentials(username: username, password: password)
             
@@ -30,14 +36,20 @@ def login
             puts "What is the username?"
             username = gets.chomp
 
+            system("clear")
+
             password_validation = false
 
             while !password_validation do 
                 puts "What is the password?"
                 password1 = gets.chomp
 
+                system("clear")
+
                 puts "Validate the password please."
                 password2 = gets.chomp
+
+                system("clear")
 
                 password_validation = password1 == password2
 

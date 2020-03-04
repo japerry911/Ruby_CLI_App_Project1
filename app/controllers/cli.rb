@@ -18,12 +18,19 @@ class CLI
 
             response = prompt.select("Which would you like to do:", ["Play Game", "Check Highscore", "Exit"])
 
+            puts
+
             if response == "Play Game"
                 game
             elsif response == "Check Highscore"
-                # check high score
+                high_score_record = User.get_high_score
+                
+                puts "#{high_score_record.username} earned a high score of #{high_score_record.high_score}!"
+                puts
+                prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
             else
                 puts "Exiting Game. Goodbye!" 
+                puts
                 break
             end
         end
@@ -70,37 +77,52 @@ class CLI
             puts "Total Score - #{total_score} pts"
         end
 
+        if self.user.high_score < total_score
+            self.user.update({:high_score => total_score})
+        end
+
         prompt = TTY::Prompt.new 
 
-        prompt.keypress("Press Enter or Space to continue.", keys: [:space, :enter])
+        prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
     end
 
     # Game logic. User is making their guess(es)
     def play_round_guess(hangman_art_use)
+        system("clear")
+
+        prompt = TTY::Prompt.new
+
         puts "Current game board:"
         print_game_board(hangman_art_use[self.number_of_guesses])
 
         puts "Which letter would you like to guess?"
+        puts
         guess = gets.chomp
             
         case valid_letter_check(guess) 
         when -1
             puts "Input was blank, try again, no guess penalty."
-            puts
+            prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
             play_round_guess(hangman_art_use)
         when 0
             puts "Input has already been used in a guess, try again, no guess penalty."
-            puts
+            prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
             play_round_guess(hangman_art_use)
         when 1
             round_result = check_guess(guess)
             self.number_of_guesses += round_result 
 
+            puts
+
             if round_result == 0
                 puts "Nice guess - #{guess}!"
             else
-                puts "Wrong guess - #{guess}! Your numnber of guesses is now: #{self.number_of_guesses}."
+                puts "Wrong guess - #{guess}! Your number of guesses is now: #{self.number_of_guesses}."
             end
+            
+            puts
+
+            prompt.keypress("Press Enter or Space to see updated board:", keys: [:space, :return])
         end
     end
 
@@ -207,8 +229,6 @@ class CLI
     def main_banner
         system("clear")
 
-        puts ""
-        puts ""
         puts "========================================".colorize(:red)
         puts ""
         puts "Welcome to the Ruby Hangman CLI Application!"
