@@ -23,7 +23,7 @@ class CLI
             elsif response == "Check Highscore"
                 # check high score
             else
-                puts "Exiting Game. Goodbye!"
+                puts "Exiting Game. Goodbye!" 
                 break
             end
         end
