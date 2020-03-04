@@ -23,3 +23,7 @@ gem "rest-client", "~> 2.1"
 gem "json", "~> 2.3"
 
 gem "colorize", "~> 0.8.1"
+
+gem 'tty-font'
+
+gem "tty-prompt", "~> 0.20.0"

@@ -7,10 +7,11 @@ end
 def login 
     valid_login = false
     while !valid_login do
-        puts "Would you like to 1 Login, or 2 Create a New User?"
-        login_or_create = gets.chomp
+        prompt = TTY::Prompt.new 
+        
+        response = prompt.select("What would you like to do?", ["Login", "Create a New User"])
 
-        if login_or_create == "1"
+        if response == "Login"
             puts "What is the username?"
             username = gets.chomp
 
@@ -25,7 +26,7 @@ def login
             end
 
             logged_in_user = valid_login
-        elsif login_or_create == "2"
+        elsif response == "Create a New User"
             puts "What is the username?"
             username = gets.chomp
 
@@ -48,8 +49,6 @@ def login
             logged_in_user = User.create(username: username, password: password2, high_score: 0)
 
             valid_login = true
-        else 
-            puts "Invalid command - #{login_or_create} - try again."
         end
     end
 
