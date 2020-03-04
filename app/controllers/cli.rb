@@ -1,27 +1,29 @@
 class CLI
     attr_reader :user
-    attr_accessor :board, :score
+    attr_accessor :board, :score, :guesses, :game_word
 
     def initialize(user)
         @user = user
         @score = 100
         @board = []
+        @guesses = []
     end
 
     def game
         start_game_banner
 
         topic = topic_selection
-        game_word = select_word(topic)
+        self.game_word = select_word(topic)
         create_default_game_board(game_word)
         hangman_art_use = hangman_art
         print_hangman_art(hangman_art_use[0])
-        binding.pry
-        """game_over = false
+
+        game_over = false
         win = false 
         number_of_guesses = 0
 
-        while !game_over do
+        play_round_guess
+        """while !game_over do
             correct_status = play_round_guess
 
             if !correct_status
@@ -42,8 +44,59 @@ class CLI
         end"""
     end
 
+    def play_round_guess
+        binding.pry
+        while true 
+            puts "Which letter would you like to guess?"
+            guess = gets.chomp
+
+            valid_number = valid_letter_check(guess)
+            
+            case valid_number 
+            when -1
+                puts "Input was blank, try again, no guess penalty."
+            when 0
+                puts "Input has already been used in a guess, try again, no guess penalty."
+            when 1
+                round_result = check_guess(guess)
+            end
+
+            puts "Letter already guessed or invalid guess, guess again."
+        end 
+    end
+
+    def check_guess(guess)
+        if guess.length > 1
+            if game_word.downcase == guess.downcase
+                board = game_word.split("")
+                return 0
+            else
+                return 1
+            end
+        else
+            result = (0...game_word.length).select {|index| game_word[index].downcase == guess.downcase}
+
+            for i in result
+                binding.pry
+            end
+        end
+    end
+
+    def valid_letter_check(guess)
+        binding.pry
+        if guesses.include?(guess)
+            return 0
+        elsif guess.length == 0
+            return -1
+        else
+            guesses << guess
+            return 1
+        end
+    end
+
     def create_default_game_board(game_word)
         counter = 0
+        board = []
 
         while counter < game_word.length do 
             board << "_"
