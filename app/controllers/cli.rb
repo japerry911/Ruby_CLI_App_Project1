@@ -70,7 +70,7 @@ class CLI
             puts "Total Score - #{total_score} pts"
         end
 
-        prompt = TTY::Prompt.new
+        prompt = TTY::Prompt.new 
 
         prompt.keypress("Press Enter or Space to continue.", keys: [:space, :enter])
     end
