@@ -1,18 +1,25 @@
+# CLI Class - Command-line Class - Handles the whole game instance
 class CLI
+    # Macros for some instance variables that are used
     attr_reader :user
     attr_accessor :board, :score, :guesses, :game_word, :number_of_guesses
 
+    # Initialize user instance variable, and set score to highest possible score of 60, and reset board
     def initialize(user)
         @user = user
         @score = 60
         @board = []
     end
 
+    # The actual CLI Instance
+    # Can access game and high scores from here
     def cli_instance
+        # Loading Screen
         start_loading
 
         prompt = TTY::Prompt.new 
 
+        # Loop through having the main banner & menu until they exit game
         while true do 
             main_banner
 
@@ -40,14 +47,17 @@ class CLI
     def game
         system("clear")
 
+        # Set game up with selecting topic, game_word, and reseting the board to have the empty letters
         topic = topic_selection
         self.game_word = select_word(topic)
         reset_game(game_word)
         hangman_art_use = hangman_art
 
+        # Set win to false and number_of_guesses to 0
         win = false 
         self.number_of_guesses = 0
 
+        # While loop through the actual game of hangman
         while true do
             system("clear")
 
@@ -63,12 +73,16 @@ class CLI
             end
         end
 
+        # Reveal the guessing game word
         puts
         puts "Game Word: #{self.game_word}"
         puts
 
+        # Calculate final total score (1 incorrect guess equals minus 10 points from 60)
         total_score = self.score - (self.number_of_guesses * 10)
 
+        # Display You Win or You Lose based off if they win or lose
+        # Utilize the TTY::Font ascii art creation gem
         if win
             puts TTY::Font.new(:doom).write("You  Win!")
             puts "Total Score - #{total_score} pts"
@@ -77,6 +91,8 @@ class CLI
             puts "Total Score - #{total_score} pts"
         end
 
+        # Update 'user' instance variable high score if it needs to be updated
+        # Update also occurs in users table 
         if self.user.high_score < total_score
             self.user.update({:high_score => total_score})
         end
@@ -95,20 +111,31 @@ class CLI
         puts "Current game board:"
         print_game_board(hangman_art_use[self.number_of_guesses])
 
+        # Letter/character guess
         puts "Which letter would you like to guess?"
         puts
         guess = gets.chomp
             
+        # Use valid_letter_check function to check validity of letter
         case valid_letter_check(guess) 
+        # -2 = Invalid option - character is not equal to A-Za-z letter
+        when -2
+            puts "Input is not a valid letter A-Z or a-z. Please try again."
+            prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
+            play_round_guess(hangman_art_use)
+        # -1 = blank input
         when -1
             puts "Input was blank, try again, no guess penalty."
             prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
             play_round_guess(hangman_art_use)
+        # 0 = already guessed letter
         when 0
             puts "Input has already been used in a guess, try again, no guess penalty."
             prompt.keypress("Press Enter or Space to continue.", keys: [:space, :return])
             play_round_guess(hangman_art_use)
+        # 1 = valid guess || Check to see if letter is in game_word or if guess is equal to game_word
         when 1
+            # returns 0 if it's a correct guess, otherwise return 1
             round_result = check_guess(guess)
             self.number_of_guesses += round_result 
 
@@ -158,6 +185,9 @@ class CLI
         elsif guess.length == 0
             # Return -1, meaning that the guess is blank
             return -1
+        elsif guess.match(/[A-Za-z]/) == nil
+            # Return -2, meaning that the guess is an invalid letter A-Z a-z
+            return -2
         else
             # Return 1, meaning that guess is valid / add guess to the guesses array.
             self.guesses << guess
@@ -229,11 +259,11 @@ class CLI
     def main_banner
         system("clear")
 
-        puts "========================================".colorize(:red)
+        puts "==============================================================".colorize(:red)
         puts ""
         puts "Welcome to the Ruby Hangman CLI Application!"
         puts ""
-        puts "========================================".colorize(:red)
+        puts "==============================================================".colorize(:red)
     end
 
     # Displays the current state of the game board

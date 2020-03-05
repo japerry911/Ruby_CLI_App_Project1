@@ -1,9 +1,11 @@
 require "pry"
 
+# Used in finding the database username and password and making sure it matches up with inputted values
 def validate_credentials(username:, password:)
     User.all.find {|user| user.username == username && user.password == password}
 end
 
+# Login Screen / Section
 def login 
     valid_login = false
     while !valid_login do
@@ -13,17 +15,18 @@ def login
 
         system("clear")
         
+        # Checking which option was selected and proceed accordingly
         if response == "Login"
             puts "What is the username?"
             username = gets.chomp
 
             system("clear")
 
-            puts "What is the password?"
-            password = gets.chomp 
+            password = prompt.mask("What is the password?")
 
             system("clear")
 
+            # check if login is valid, if it's valid it'll return the db/class instance, otherwise it'll return nil
             valid_login = validate_credentials(username: username, password: password)
             
             if !valid_login 
@@ -41,13 +44,11 @@ def login
             password_validation = false
 
             while !password_validation do 
-                puts "What is the password?"
-                password1 = gets.chomp
+                password1 = prompt.mask("What is the password?")
 
                 system("clear")
 
-                puts "Validate the password please."
-                password2 = gets.chomp
+                password2 = prompt.mask("Validate the password please.")
 
                 system("clear")
 
@@ -58,6 +59,7 @@ def login
                 end
             end
 
+            # Create user as instance and as db record
             logged_in_user = User.create(username: username, password: password2, high_score: 0)
 
             valid_login = true
