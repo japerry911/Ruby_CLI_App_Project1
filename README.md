@@ -5,7 +5,7 @@ Ruby CLI Hangman is a personal student project and as such is intended solely fo
 
 This CLI application allows you to play a game of Hangman from the command line.
 
-Users have the option of select one of four different categories of words they wish to try and guess.
+Users have the option to select one of four different categories of words they wish to try and guess.
 
 #### Installation
 After you clone this repository to your local machine, `cd` into the project directory and run `bundle install` to install required gems.
@@ -25,4 +25,4 @@ The gem is available as open source under the terms of the MIT License.
 Everyone interacting in the project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the code of conduct.
 
 #### Disclaimer 
-Ruby CLI Hangman is a personal student project and as such is intended solely for educational purposes. The authors have made efforts to follow fair use guidelines in my use of all material under copyright.
+Ruby CLI Hangman is a personal student project and as such is intended solely for educational purposes. The authors have made efforts to follow fair use guidelines in their use of all material under copyright.
