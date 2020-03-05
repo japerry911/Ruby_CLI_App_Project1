@@ -8,7 +8,7 @@ This CLI application allows you to play a game of Hangman from the command line.
 Users have the option of select one of four different categories of words they wish to try and guess.
 
 #### Installation
-After you clone this repository to your local machine, `cd` into the project directory and run `bundle install` to install required gems, and you should be good to go.
+After you clone this repository to your local machine, `cd` into the project directory and run `bundle install` to install required gems.
 
 Next run `rake db:migrate` and then `rake db:seed` and you’re ready to play!
 
